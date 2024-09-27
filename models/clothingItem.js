@@ -41,5 +41,7 @@ const clothingItemSchema = new mongoose.Schema({
 });
 
 const clothing = mongoose.model("Clothing", clothingItemSchema);
-
+module.exports.createClothingItem = (req, res) => {
+  console.log(req.user._id); // _id will become accessible
+};
 module.exports = clothing;

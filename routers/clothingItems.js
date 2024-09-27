@@ -1,9 +1,10 @@
 const router = require("express").Router();
-router.get("/items", () => {
+router.get("/", (req, res) => {
   console.log("GET ITEMS");
 });
-router.post("/items", (item_name, weatherType, imageUrl) => {
-  console.log("POST USER ID");
+router.post("/", (req, res) => {
+  const { name, weatherType, imageURL } = req.body;
+  return res.status(200).send("post successful");
 });
 router.delete("/", (_id) => {
   console.log("DELETE USERS");
