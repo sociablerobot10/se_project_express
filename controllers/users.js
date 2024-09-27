@@ -13,7 +13,8 @@ function createUser(req, res) {
     });
 }
 function getUsers(req, res) {
-  User.find({})
+  userModel
+    .find({})
     .then((users) => {
       res.status(200).send(users);
     })
