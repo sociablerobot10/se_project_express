@@ -15,6 +15,13 @@ function getClothingItems(req, res) {
       console.error("Error fetching users:", err);
     });
 }
+function deleteClothingItem(req, res) {
+  console.log("DELETE item");
+  clothingItemModel
+    .findOneAndRemove({ _id: req.params.itemId })
+    .then((user) => res.status(200).send(user))
+    .catch((error) => res.status(500).send(error));
+}
 function likeItem(req, res) {
   clothingItemModel
     .findByIdAndUpdate(
@@ -22,7 +29,7 @@ function likeItem(req, res) {
       { $addToSet: { likes: req.user._id } }, // Add user's ID to the likes array if it's not there yet
       { new: true } // Return the updated document
     )
-    .then((updatedItem) => res.send(updatedItem))
+    .then((updatedItem) => res.status(200).send(updatedItem))
     .catch((err) => res.status(500).send({ message: err.message }));
 }
 function dislikeItem(req, res) {
@@ -57,4 +64,5 @@ module.exports = {
   createClothingItem,
   likeItem,
   dislikeItem,
+  deleteClothingItem,
 };
