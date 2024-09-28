@@ -51,6 +51,9 @@ function likeItem(req, res) {
       if (err.name === "ValidationError" || err.name === "CastError") {
         return res.status(invalidDataPassError).send({ message: err.message });
       }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
       if (err.name === "AssertionError") {
         return res.status(notExistingError).send({ message: err.message });
       }
