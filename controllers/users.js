@@ -1,3 +1,8 @@
+const {
+  invalidDataPassError,
+  notExistingError,
+  defaultError,
+} = require("../utils/errors");
 const userModel = require("../models/user");
 
 function createUser(req, res) {
@@ -19,7 +24,10 @@ function getUsers(req, res) {
       res.status(200).send(users);
     })
     .catch((err) => {
-      console.error("Error fetching users:", err);
+      if (err.name == "ValidationError") {
+        console.log(err);
+        return res.status(invalidDataPassError).send("Invalid object sent");
+      }
     });
 }
 

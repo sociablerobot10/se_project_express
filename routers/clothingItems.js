@@ -6,6 +6,7 @@ const {
 router.get("/", getClothingItems);
 
 router.post("/", createClothingItem);
+router.get("/:itemId/likes");
 router.delete("/", (_id) => {
   console.log("DELETE USERS");
 });
