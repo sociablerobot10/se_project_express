@@ -12,15 +12,31 @@ function getClothingItems(req, res) {
       res.status(200).send(items);
     })
     .catch((err) => {
-      console.error("Error fetching users:", err);
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        return res.status(invalidDataPassError).send({ message: err.message });
+      }
+      if (err.name === "AssertionError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      return res.status(defaultError).send({ message: err.message });
     });
 }
 function deleteClothingItem(req, res) {
-  console.log("DELETE item");
   clothingItemModel
     .findOneAndRemove({ _id: req.params.itemId })
+    .orFail()
     .then((user) => res.status(200).send(user))
-    .catch((error) => res.status(500).send(error));
+    .catch((err) => {
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        return res.status(invalidDataPassError).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      if (err.name === "AssertionError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+    });
 }
 function likeItem(req, res) {
   clothingItemModel
@@ -29,8 +45,17 @@ function likeItem(req, res) {
       { $addToSet: { likes: req.user._id } }, // Add user's ID to the likes array if it's not there yet
       { new: true } // Return the updated document
     )
+    .orFail()
     .then((updatedItem) => res.status(200).send(updatedItem))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        return res.status(invalidDataPassError).send({ message: err.message });
+      }
+      if (err.name === "AssertionError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      return res.status(defaultError).send({ message: err.message });
+    });
 }
 function dislikeItem(req, res) {
   clothingItemModel
@@ -39,23 +64,38 @@ function dislikeItem(req, res) {
       { $pull: { likes: req.user._id } }, // Add user's ID to the likes array if it's not there yet
       { new: true } // Return the updated document
     )
+    .orFail()
     .then((updatedItem) => res.send(updatedItem))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        return res.status(invalidDataPassError).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      if (err.name === "AssertionError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      return res.status(defaultError).send({ message: err.message });
+    });
 }
 function createClothingItem(req, res) {
-  const { name, weather, imageURL } = req.body;
+  const { name, weather, imageUrl } = req.body;
 
   clothingItemModel
-    .create({ name, weather, imageURL, owner: req.user._id })
-    .then((user) => {
-      return res.status(201).send(user);
-    })
+    .create({ name, weather, imageUrl, owner: req.user._id })
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
-      console.log(err.name);
-      if (err.name == "ValidationError") {
-        console.log(err);
-        return res.status(invalidDataPassError).send("Invalid object sent");
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        return res.status(invalidDataPassError).send({ message: err.message });
       }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      if (err.name === "AssertionError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+      return res.status(defaultError).send({ message: err.message });
     });
 }
 

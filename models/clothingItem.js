@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+
 const clothingItemSchema = new mongoose.Schema({
   name: {
     // every user has a name field, the requirements for which are described below:
@@ -13,7 +14,7 @@ const clothingItemSchema = new mongoose.Schema({
     required: true,
     enum: ["hot", "warm", "cold"],
   },
-  imageURL: {
+  imageUrl: {
     type: String,
     required: true,
     validate: {
@@ -41,7 +42,5 @@ const clothingItemSchema = new mongoose.Schema({
 });
 
 const clothing = mongoose.model("Clothing", clothingItemSchema);
-module.exports.createClothingItem = (req, res) => {
-  console.log(req.user._id); // _id will become accessible
-};
+
 module.exports = clothing;

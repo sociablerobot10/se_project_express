@@ -6,6 +6,7 @@ const {
   likeItem,
   dislikeItem,
 } = require("../controllers/clothingItems");
+
 router.get("/", getClothingItems);
 
 router.post("/", createClothingItem);
@@ -18,6 +19,6 @@ router.use((req, res) => {
 });
 
 module.exports = router;
-//GET /items — returns all clothing items
+// GET /items — returns all clothing items
 
 // all routes start with /users
