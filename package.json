@@ -9,7 +9,11 @@
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  "author": "",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "http://your-website.com"
+  },
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.57.1",
