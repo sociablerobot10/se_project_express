@@ -45,7 +45,7 @@ function getUsers(req, res) {
 }
 function getUserById(req, res) {
   userModel
-    .findById(req.params.id)
+    .findById(req.params.userId)
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
