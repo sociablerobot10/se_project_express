@@ -11,15 +11,11 @@ function getClothingItems(req, res) {
     .then((items) => {
       res.status(200).send(items);
     })
-    .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "AssertionError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
-    });
+    .catch(() =>
+      res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" })
+    );
 }
 function deleteClothingItem(req, res) {
   clothingItemModel
@@ -33,9 +29,9 @@ function deleteClothingItem(req, res) {
       if (err.name === "DocumentNotFoundError") {
         return res.status(notExistingError).send({ message: err.message });
       }
-      if (err.name === "AssertionError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 }
 function likeItem(req, res) {
@@ -54,10 +50,10 @@ function likeItem(req, res) {
       if (err.name === "DocumentNotFoundError") {
         return res.status(notExistingError).send({ message: err.message });
       }
-      if (err.name === "AssertionError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
+
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 }
 function dislikeItem(req, res) {
@@ -76,10 +72,10 @@ function dislikeItem(req, res) {
       if (err.name === "DocumentNotFoundError") {
         return res.status(notExistingError).send({ message: err.message });
       }
-      if (err.name === "AssertionError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
+
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 }
 function createClothingItem(req, res) {
@@ -95,10 +91,10 @@ function createClothingItem(req, res) {
       if (err.name === "DocumentNotFoundError") {
         return res.status(notExistingError).send({ message: err.message });
       }
-      if (err.name === "AssertionError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
+
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 }
 

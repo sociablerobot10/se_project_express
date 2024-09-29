@@ -28,11 +28,5 @@ module.exports = {
         allow: ["_id"],
       },
     ],
-    camelcase: [
-      "error",
-      {
-        properties: "never",
-      },
-    ],
   },
 };

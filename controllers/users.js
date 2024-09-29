@@ -14,34 +14,21 @@ function createUser(req, res) {
       if (err.name === "ValidationError" || err.name === "CastError") {
         return res.status(invalidDataPassError).send({ message: err.message });
       }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-      if (err.name === "AssertionError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
+
       return res.status(defaultError).send({ message: err.message });
     });
 }
 function getUsers(req, res) {
   userModel
     .find({})
-    .orFail()
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-      if (err.name === "AssertionError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
-    });
+    .catch(() =>
+      res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" })
+    );
 }
 function getUserById(req, res) {
   userModel
@@ -55,10 +42,10 @@ function getUserById(req, res) {
       if (err.name === "DocumentNotFoundError") {
         return res.status(notExistingError).send({ message: err.message });
       }
-      if (err.name === "AssertionError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
+
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 }
 module.exports = { createUser, getUsers, getUserById };
