@@ -1,9 +1,16 @@
 const router = require("express").Router();
-const { createUser, getUsers, getUserById } = require("../controllers/users");
+const {
+  createUser,
+  getUsers,
+  getUserById,
+  getCurrentUser,
+} = require("../controllers/users");
 // all routes start with /users
 
-router.get("/", getUsers);
-router.post("/", createUser);
-router.get("/:userId", getUserById);
+const authorizeUser = require("../middlewares/auth");
+router.get("/", authorizeUser, getUsers);
+router.post("/", authorizeUser, createUser);
+router.get("/:userId", authorizeUser, getUserById);
+router.get("/me", authorizeUser, getCurrentUser);
 
 module.exports = router;
