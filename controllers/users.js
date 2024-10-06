@@ -92,15 +92,12 @@ function getUsers(req, res) {
     );
 }
 function updateUser(req, res) {
-  if (
-    (req.user.name && req.user.avatar) ||
-    (!req.user.name && req.user.avatar) ||
-    (req.user.name && !req.user.avatar)
-  ) {
+  const { name, avatar } = req.body;
+  if (name && avatar) {
     userModel
       .findByIdAndUpdate(
-        req.params.itemId,
-        { name: req.user.name, avatar: req.user.avatar }, // Add user's ID to the likes array if it's not there yet
+        req.user._id,
+        { name, avatar }, // Add user's ID to the likes array if it's not there yet
         { new: true, runValidators: true } // Return the updated document
       )
       .orFail()
