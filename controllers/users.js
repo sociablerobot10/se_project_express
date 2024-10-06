@@ -91,6 +91,36 @@ function getUsers(req, res) {
         .send({ message: "An error has occurred on the server" })
     );
 }
+function updateUser(req, res) {
+  if (
+    (req.user.name && req.user.avatar) ||
+    (!req.user.name && req.user.avatar) ||
+    (req.user.name && !req.user.avatar)
+  ) {
+    userModel
+      .findByIdAndUpdate(
+        req.params.itemId,
+        { name: req.user.name, avatar: req.user.avatar }, // Add user's ID to the likes array if it's not there yet
+        { new: true, runValidators: true } // Return the updated document
+      )
+      .orFail()
+      .then((updatedItem) => res.status(200).send(updatedItem))
+      .catch((err) => {
+        if (err.name === "ValidationError" || err.name === "CastError") {
+          return res
+            .status(invalidDataPassError)
+            .send({ message: err.message });
+        }
+        if (err.name === "DocumentNotFoundError") {
+          return res.status(notExistingError).send({ message: err.message });
+        }
+
+        return res
+          .status(defaultError)
+          .send({ message: "An error has occurred on the server" });
+      });
+  }
+}
 
 function getCurrentUser(req, res) {
   userModel
@@ -139,4 +169,11 @@ function getUserById(req, res) {
         .send({ message: "An error has occurred on the server" });
     });
 }
-module.exports = { createUser, getUsers, getUserById, login, getCurrentUser };
+module.exports = {
+  createUser,
+  getUsers,
+  getUserById,
+  login,
+  getCurrentUser,
+  updateUser,
+};
