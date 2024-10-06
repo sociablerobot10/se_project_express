@@ -49,7 +49,8 @@ function login(req, res) {
   const { email, password } = req.body;
 
   return userModel
-    .findUserByCredentials(email, password)
+    .findUserByCredentials({ email })
+    .select("+password")
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT, {
         expiresIn: "7d",
@@ -101,9 +102,16 @@ function updateUser(req, res) {
         { new: true, runValidators: true } // Return the updated document
       )
       .orFail()
-      .then((updatedItem) => res.status(200).send(updatedItem))
+      .then((updatedItem) => {
+        const { name, avatar } = updatedItem;
+        res.status(200).send({ name, avatar });
+      })
       .catch((err) => {
-        if (err.name === "ValidationError" || err.name === "CastError") {
+        if (
+          err.name === "AssertionError" ||
+          err.name === "ValidationError" ||
+          err.name === "CastError"
+        ) {
           return res
             .status(invalidDataPassError)
             .send({ message: err.message });

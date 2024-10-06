@@ -1,5 +1,5 @@
 const express = require("express");
-
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const {
@@ -20,6 +20,8 @@ app.use("/", express.json());
 //   };
 //   next();
 // });
+
+app.use(cors());
 app.post("/signin", login);
 app.post("/signup", createUser);
 app.use("/", mainRouter);
