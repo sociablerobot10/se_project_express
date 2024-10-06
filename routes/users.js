@@ -10,7 +10,7 @@ const {
 const authorizeUser = require("../middlewares/auth");
 router.get("/", authorizeUser, getUsers);
 router.post("/", authorizeUser, createUser);
-router.get("/:userId", authorizeUser, getUserById);
 router.get("/me", authorizeUser, getCurrentUser);
+router.get("/:userId", authorizeUser, getUserById);
 
 module.exports = router;

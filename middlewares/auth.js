@@ -15,7 +15,7 @@ function authorizeUser(req, res, next) {
       if (err) {
         return res.status(401).send({ message: "Verification failed" });
       }
-      req.user = JSON.stringify(payload);
+      req.user = payload;
       next();
     });
   }

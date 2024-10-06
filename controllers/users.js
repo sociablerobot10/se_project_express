@@ -59,7 +59,7 @@ function login(req, res) {
     })
     .then((token) => {
       res.setHeader("Content-Type", "application/json");
-      res.status(200).send(JSON.stringify(token));
+      res.status(200).send({ token: token });
     })
     .catch((err) => {
       if (
@@ -95,7 +95,15 @@ function getUsers(req, res) {
 function getCurrentUser(req, res) {
   userModel
     .findById(req.user._id)
-    .then((user) => res.status(200).send(JSON.stringify(user)))
+    .then((user) => {
+      const { _id, email, avatar } = user;
+      res.status(200).send({
+        _id,
+        email,
+
+        avatar,
+      });
+    })
     .catch((err) => {
       if (
         err.name === "ValidationError" ||
