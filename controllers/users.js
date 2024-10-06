@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const {
   invalidDataPassError,
   notExistingError,
@@ -7,24 +9,22 @@ const {
 
 const userModel = require("../models/user");
 const { JWT } = require("../utils/config");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+
 function createUser(req, res) {
   const { name, email, password, avatar } = req.body;
   userModel
-    .findOne({ email: email })
+    .findOne({ email })
     .then((user) => {
       if (user) {
         throw new Error("Email taken");
       }
       return bcrypt.hash(password, 10);
     })
-    .then((newpwd) => {
-      return userModel.create({ name, email, password: newpwd, avatar });
-    })
-    .then((user) => res.status(201).send({ name, email, avatar }))
+    .then((newpwd) =>
+      userModel.create({ name, email, password: newpwd, avatar })
+    )
+    .then(() => res.status(201).send({ name, email, avatar }))
     .catch((err) => {
-      console.error(err);
       if (
         !name ||
         !email ||
@@ -38,7 +38,8 @@ function createUser(req, res) {
         err.name === "RangeError"
       ) {
         return res.status(invalidDataPassError).send({ message: err.message });
-      } else if (err.message === "Email taken") {
+      }
+      if (err.message === "Email taken") {
         return res.status(conflictError).send({ message: err.message });
       }
       return res.status(defaultError).send({ message: err.message });
@@ -60,13 +61,12 @@ function login(req, res) {
     })
     .then((token) => {
       res.setHeader("Content-Type", "application/json");
-      res.status(200).send({ token: token });
+      res.status(200).send({ token });
     })
     .catch((err) => {
       if (
         !email ||
         !password ||
-        !avatar ||
         err.name === "ValidationError" ||
         err.name === "CastError" ||
         err.name === "AssertionError" ||
@@ -102,9 +102,8 @@ function updateUser(req, res) {
         { new: true, runValidators: true } // Return the updated document
       )
       .orFail()
-      .then((updatedItem) => {
-        const { name, avatar } = updatedItem;
-        res.status(200).send({ name, avatar });
+      .then(() => {
+        res.status(200).send(name, avatar);
       })
       .catch((err) => {
         if (

@@ -33,7 +33,7 @@ function deleteClothingItem(req, res) {
         }
         if (
           err.name === "DocumentNotFoundError" ||
-          err instanceof NotFoundError
+          err.name === "NotFoundError"
         ) {
           return res.status(notExistingError).send({ message: err.message });
         }
@@ -42,7 +42,7 @@ function deleteClothingItem(req, res) {
           .send({ message: "An error has occurred on the server" });
       });
   } else {
-    return res.status(forbiddenError).send(message);
+    return res.status(forbiddenError).send({ message });
   }
 }
 function likeItem(req, res) {

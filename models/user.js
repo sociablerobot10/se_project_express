@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+
 const userSchema = new mongoose.Schema({
   name: {
     // every user has a name field, the requirements for which are described below:
