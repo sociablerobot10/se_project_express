@@ -96,12 +96,12 @@ function getCurrentUser(req, res) {
   userModel
     .findById(req.user._id)
     .then((user) => {
-      const { _id, email, avatar } = user;
+      const { _id, email, avatar, name } = user;
       res.status(200).send({
         _id,
         email,
-
         avatar,
+        name,
       });
     })
     .catch((err) => {
