@@ -23,29 +23,55 @@ function deleteClothingItem(req, res) {
   const { itemId } = req.params; // the id sent in the url
   // find the clothing item in the database that has itemId
   // then compare the owner field to the id of the user (req.user._id) to see if they are allowed to delete the item
-  clothingItemModel.findById(itemId).then((item) => {
-    if (item.owner.toString() === req.user._id) {
-      return clothingItemModel
-        .findOneAndRemove({ _id: req.params.itemId })
-        .orFail()
-        .then((user) => res.status(200).send({ user }))
-        .catch((err) => {
-          if (err.name === "ValidationError" || err.name === "CastError") {
-            return res.status(invalidDataPassError).send(err.message);
-          }
-          if (
-            err.name === "DocumentNotFoundError" ||
-            err.name === "NotFoundError"
-          ) {
-            return res.status(notExistingError).send({ message: err.message });
-          }
-          return res
-            .status(defaultError)
-            .send({ message: "An error has occurred on the server" });
-        });
-    }
-    return res.status(forbiddenError).send({ message: err.message });
-  });
+  clothingItemModel
+    .findById(itemId)
+    .then((item) => {
+      if (item.owner.toString() === req.user._id) {
+        return clothingItemModel
+          .findOneAndRemove({ _id: req.params.itemId })
+          .orFail(() => {
+            const error = new Error("Item not found");
+            error.statusCode = 404;
+            throw error;
+          })
+          .then((user) => res.status(200).send({ user }))
+          .catch((err) => {
+            if (err.name === "ValidationError") {
+              return res.status(invalidDataPassError).send(err.message);
+            }
+            if (
+              err.name === "DocumentNotFoundError" ||
+              err.name === "NotFoundError"
+            ) {
+              return res
+                .status(notExistingError)
+                .send({ message: err.message });
+            }
+            return res
+              .status(defaultError)
+              .send({ message: "An error has occurred on the server" });
+          });
+      }
+      return res.status(forbiddenError).send({ message: err.message });
+    })
+    .catch((err) => {
+      console.error(err);
+
+      // Catch invalid ObjectId CastError
+      if (err.name === "CastError") {
+        return res
+          .status(invalidDataPassError)
+          .send({ message: "Invalid item ID" });
+      }
+
+      if (err.statusCode === 404) {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+
+      return res
+        .status(defaultError)
+        .send({ message: "An error occurred on the server" });
+    });
 }
 // if (owner === req._id) {
 
