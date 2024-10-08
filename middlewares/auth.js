@@ -16,7 +16,7 @@ function authorizeUser(req, res, next) {
       return res.status(401).send({ message: "Verification failed" });
     }
     req.user = payload;
-    return next();
+    next();
   });
 }
 
