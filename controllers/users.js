@@ -5,6 +5,7 @@ const {
   notExistingError,
   defaultError,
   conflictError,
+  unauthorizedError,
 } = require("../utils/errors");
 
 const userModel = require("../models/user");
@@ -25,18 +26,7 @@ function createUser(req, res) {
     )
     .then(() => res.status(201).send({ name, email, avatar }))
     .catch((err) => {
-      if (
-        !name ||
-        !email ||
-        !password ||
-        !avatar ||
-        err.name === "ValidationError" ||
-        err.name === "CastError" ||
-        err.name === "AssertionError" ||
-        err.name === "SyntaxError" ||
-        err.name === "TypeError" ||
-        err.name === "RangeError"
-      ) {
+      if (err.name === "ValidationError") {
         return res.status(invalidDataPassError).send({ message: err.message });
       }
       if (err.message === "Email taken") {
@@ -48,7 +38,11 @@ function createUser(req, res) {
 
 function login(req, res) {
   const { email, password } = req.body;
-
+  if (!email || !password) {
+    return res
+      .status(invalidDataPassError)
+      .send({ message: "Incorrect username or password" });
+  }
   return userModel
     .findUserByCredentials(email, password)
     .then((user) => {
@@ -60,12 +54,10 @@ function login(req, res) {
     })
     .then((token) => {
       res.setHeader("Content-Type", "application/json");
-      res.status(200).send({ token });
+      return res.status(200).send({ token });
     })
     .catch((err) => {
-      if (
-        !email ||
-        !password ||
+      /*      if (
         err.name === "ValidationError" ||
         err.name === "CastError" ||
         err.name === "AssertionError" ||
@@ -74,53 +66,39 @@ function login(req, res) {
         err.name === "RangeError"
       ) {
         return res.status(invalidDataPassError).send({ message: err.message });
+      } */
+      if (err.message === "Incorrect email or password") {
+        return res.status(unauthorizedError).send({ message: err.message });
       }
-      // authentication error
-      return res.status(401).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error occurred on the server" });
     });
 }
-function getUsers(req, res) {
-  userModel
-    .find({})
-    .then((users) => {
-      res.status(200).send(users);
-    })
-    .catch(() =>
-      res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" })
-    );
-}
+
 function updateUser(req, res) {
   const { name, avatar } = req.body;
-  if (name && avatar) {
-    userModel
-      .findByIdAndUpdate(
-        req.user._id,
-        { name, avatar }, // Add user's ID to the likes array if it's not there yet
-        { new: true, runValidators: true } // Return the updated document
-      )
-      .orFail()
-      .then(() => res.status(200).send({ name, avatar }))
-      .catch((err) => {
-        if (
-          err.name === "AssertionError" ||
-          err.name === "ValidationError" ||
-          err.name === "CastError"
-        ) {
-          return res
-            .status(invalidDataPassError)
-            .send({ message: err.message });
-        }
-        if (err.name === "DocumentNotFoundError") {
-          return res.status(notExistingError).send({ message: err.message });
-        }
 
-        return res
-          .status(defaultError)
-          .send({ message: "An error has occurred on the server" });
-      });
-  }
+  userModel
+    .findByIdAndUpdate(
+      req.user._id,
+      { name, avatar }, // Add user's ID to the likes array if it's not there yet
+      { new: true, runValidators: true } // Return the updated document
+    )
+    .orFail()
+    .then(() => res.status(200).send({ name, avatar }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(invalidDataPassError).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(notExistingError).send({ message: err.message });
+      }
+
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
+    });
 }
 
 function getCurrentUser(req, res) {
@@ -136,11 +114,7 @@ function getCurrentUser(req, res) {
       });
     })
     .catch((err) => {
-      if (
-        err.name === "ValidationError" ||
-        err.name === "AssertionError" ||
-        err.name === "CastError"
-      ) {
+      if (err.name === "CastError") {
         return res.status(invalidDataPassError).send({ message: err.message });
       }
       if (err.name === "DocumentNotFoundError") {
@@ -152,28 +126,9 @@ function getCurrentUser(req, res) {
         .send({ message: "An error has occurred on the server" });
     });
 }
-function getUserById(req, res) {
-  userModel
-    .findById(req.params.userId)
-    .orFail()
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
 
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
-    });
-}
 module.exports = {
   createUser,
-  getUsers,
-  getUserById,
   login,
   getCurrentUser,
   updateUser,
