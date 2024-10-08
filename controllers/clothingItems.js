@@ -46,7 +46,7 @@ function deleteClothingItem(req, res) {
             .send({ message: "An error has occurred on the server" });
         });
     }
-    return res.status(forbiddenError).send({ message });
+    return res.status(forbiddenError).send(err.message);
   });
 }
 // if (owner === req._id) {
