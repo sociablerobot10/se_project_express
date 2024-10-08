@@ -26,7 +26,7 @@ function deleteClothingItem(req, res) {
   clothingItemModel
     .findById(itemId)
     .orFail(() => {
-      const error = new Error("Document not Found");
+      const error = new Error("NotFoundError");
       error.statusCode = notExistingError;
       throw error;
     })
