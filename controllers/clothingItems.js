@@ -31,9 +31,7 @@ function deleteClothingItem(req, res) {
         .then((user) => res.status(200).send({ user }))
         .catch((err) => {
           if (err.name === "ValidationError" || err.name === "CastError") {
-            return res
-              .status(invalidDataPassError)
-              .send({ message: err.message });
+            return res.status(invalidDataPassError).send(err.message);
           }
           if (
             err.name === "DocumentNotFoundError" ||
@@ -46,7 +44,7 @@ function deleteClothingItem(req, res) {
             .send({ message: "An error has occurred on the server" });
         });
     }
-    return res.status(forbiddenError).send(err.message);
+    return res.status(forbiddenError).send({ message: err.message });
   });
 }
 // if (owner === req._id) {
