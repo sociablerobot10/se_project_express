@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 userSchema.statics.findUserByCredentials = function (email, password) {
-  return this.findOne({ email }) // Using `this` to refer to the User model
+  return this.findOne({ email }) // why do we put select here instead of in users.js
+    .select("+password")
     .then((user) => {
       if (!user) {
         return Promise.reject(new Error("Incorrect email or password"));

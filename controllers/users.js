@@ -50,8 +50,7 @@ function login(req, res) {
   const { email, password } = req.body;
 
   return userModel
-    .findUserByCredentials({ email })
-    .select("+password")
+    .findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT, {
         expiresIn: "7d",
@@ -77,7 +76,7 @@ function login(req, res) {
         return res.status(invalidDataPassError).send({ message: err.message });
       }
       // authentication error
-      res.status(401).send({ message: err.message });
+      return res.status(401).send({ message: err.message });
     });
 }
 function getUsers(req, res) {
@@ -102,9 +101,7 @@ function updateUser(req, res) {
         { new: true, runValidators: true } // Return the updated document
       )
       .orFail()
-      .then(() => {
-        res.status(200).send(name, avatar);
-      })
+      .then(() => res.status(200).send({ name, avatar }))
       .catch((err) => {
         if (
           err.name === "AssertionError" ||
