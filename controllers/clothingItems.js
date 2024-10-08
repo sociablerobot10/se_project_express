@@ -28,7 +28,7 @@ function deleteClothingItem(req, res) {
       return clothingItemModel
         .findOneAndRemove({ _id: req.params.itemId })
         .orFail()
-        .then((user) => res.status(200).send(user))
+        .then((user) => res.status(200).send({ user }))
         .catch((err) => {
           if (err.name === "ValidationError" || err.name === "CastError") {
             return res
