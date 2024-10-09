@@ -25,20 +25,12 @@ function deleteClothingItem(req, res) {
   // then compare the owner field to the id of the user (req.user._id) to see if they are allowed to delete the item
   clothingItemModel
     .findById(itemId)
-    .orFail(() => {
-      const error = new Error("NotFoundError");
-      error.statusCode = notExistingError;
-      throw error;
-    })
+    .orFail()
     .then((item) => {
       if (item.owner.toString() === req.user._id) {
         return clothingItemModel
           .findOneAndRemove({ _id: req.params.itemId })
-          .orFail(() => {
-            const error = new Error("Item not found");
-            error.statusCode = notExistingError;
-            throw error;
-          })
+          .orFail()
           .then((user) => res.status(200).send({ user }))
           .catch((err) => {
             if (
