@@ -17,4 +17,6 @@ app.post("/signin", login);
 app.post("/signup", createUser);
 app.use("/", mainRouter);
 
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.log(PORT);
+});
