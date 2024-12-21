@@ -46,15 +46,22 @@ function login(req, res) {
   return userModel
     .findUserByCredentials(email, password)
     .then((user) => {
+      // authentication successful! user is in the user variable
       const token = jwt.sign({ _id: user._id }, JWT, {
         expiresIn: "7d",
       });
-      return token;
-      // authentication successful! user is in the user variable
-    })
-    .then((token) => {
       res.setHeader("Content-Type", "application/json");
-      return res.status(200).send({ token });
+      return res
+        .status(200)
+        .send({
+          token,
+          user: {
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+            _id: user._id,
+          },
+        });
     })
     .catch((err) => {
       /*      if (
