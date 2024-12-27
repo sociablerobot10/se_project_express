@@ -51,17 +51,15 @@ function login(req, res) {
         expiresIn: "7d",
       });
       res.setHeader("Content-Type", "application/json");
-      return res
-        .status(200)
-        .send({
-          token,
-          user: {
-            name: user.name,
-            email: user.email,
-            avatar: user.avatar,
-            _id: user._id,
-          },
-        });
+      return res.status(200).send({
+        token,
+        user: {
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar,
+          _id: user._id,
+        },
+      });
     })
     .catch((err) => {
       /*      if (
@@ -93,7 +91,7 @@ function updateUser(req, res) {
       { new: true, runValidators: true } // Return the updated document
     )
     .orFail()
-    .then(() => res.status(200).send({ name, avatar }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(invalidDataPassError).send({ message: err.message });
