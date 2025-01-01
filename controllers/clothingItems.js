@@ -1,3 +1,4 @@
+const { handleErrors } = require("../middlewares/error-handler");
 const clothingItemModel = require("../models/clothingItem");
 const {
   invalidDataPassError,
@@ -19,7 +20,7 @@ function getClothingItems(req, res) {
     );
 }
 
-function deleteClothingItem(req, res) {
+function deleteClothingItem(req, res, next) {
   const { itemId } = req.params; // the id sent in the url
   // find the clothing item in the database that has itemId
   // then compare the owner field to the id of the user (req.user._id) to see if they are allowed to delete the item
@@ -110,20 +111,14 @@ function dislikeItem(req, res) {
         .send({ message: "An error has occurred on the server" });
     });
 }
-function createClothingItem(req, res) {
+function createClothingItem(req, res, next) {
   const { name, weather, imageUrl } = req.body;
 
   clothingItemModel
     .create({ name, weather, imageUrl, owner: req.user._id })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
+      return handleErrors(err, res, next);
     });
 }
 
