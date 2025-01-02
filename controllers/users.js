@@ -7,6 +7,7 @@ const {
   conflictError,
   unauthorizedError,
 } = require("../utils/errors");
+const { handleErrors } = require("../middlewares/error-handler");
 
 const userModel = require("../models/user");
 const { JWT } = require("../utils/config");

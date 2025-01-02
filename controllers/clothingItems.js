@@ -1,3 +1,4 @@
+const ForbiddenError = require("../errors/forbiddenError");
 const { handleErrors } = require("../middlewares/error-handler");
 const clothingItemModel = require("../models/clothingItem");
 const {
@@ -34,36 +35,10 @@ function deleteClothingItem(req, res, next) {
           .orFail()
           .then((user) => res.status(200).send({ user }))
           .catch((err) => {
-            if (
-              err.name === "DocumentNotFoundError" ||
-              err.name === "NotFoundError"
-            ) {
-              return res
-                .status(notExistingError)
-                .send({ message: err.message });
-            }
-            return res
-              .status(defaultError)
-              .send({ message: "An error has occurred on the server" });
+            return handleErrors(err, res, next);
           });
       }
-      return res.status(forbiddenError).send({ message: "Forbidden error" });
-    })
-    .catch((err) => {
-      // Catch invalid ObjectId CastError
-      if (err.name === "CastError") {
-        return res
-          .status(invalidDataPassError)
-          .send({ message: "Invalid item ID" });
-      }
-
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-
-      return res
-        .status(defaultError)
-        .send({ message: "An error occurred on the server" });
+      return next(new ForbiddenError("Forbidden error"));
     });
 }
 
@@ -77,16 +52,7 @@ function likeItem(req, res) {
     .orFail()
     .then((updatedItem) => res.status(200).send(updatedItem))
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
+      return handleErrors(err, res, next);
     });
 }
 function dislikeItem(req, res) {
@@ -99,16 +65,7 @@ function dislikeItem(req, res) {
     .orFail()
     .then((updatedItem) => res.send(updatedItem))
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
+      return handleErrors(err, res, next);
     });
 }
 function createClothingItem(req, res, next) {
