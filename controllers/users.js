@@ -26,17 +26,8 @@ function createUser(req, res) {
       userModel.create({ name, email, password: newpwd, avatar })
     )
     .then(() => res.status(201).send({ name, email, avatar }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.message === "Email taken") {
-        return res.status(conflictError).send({ message: err.message });
-      }
-      return res.status(defaultError).send({ message: err.message });
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
-
 function login(req, res) {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -62,24 +53,7 @@ function login(req, res) {
         },
       });
     })
-    .catch((err) => {
-      /*      if (
-        err.name === "ValidationError" ||
-        err.name === "CastError" ||
-        err.name === "AssertionError" ||
-        err.name === "SyntaxError" ||
-        err.name === "TypeError" ||
-        err.name === "RangeError"
-      ) {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      } */
-      if (err.message === "Incorrect email or password") {
-        return res.status(unauthorizedError).send({ message: err.message });
-      }
-      return res
-        .status(defaultError)
-        .send({ message: "An error occurred on the server" });
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
 
 function updateUser(req, res) {
@@ -93,18 +67,7 @@ function updateUser(req, res) {
     )
     .orFail()
     .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
 
 function getCurrentUser(req, res) {
@@ -119,18 +82,7 @@ function getCurrentUser(req, res) {
         name,
       });
     })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(invalidDataPassError).send({ message: err.message });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(notExistingError).send({ message: err.message });
-      }
-
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
 
 module.exports = {

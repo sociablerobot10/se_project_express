@@ -1,12 +1,7 @@
 const ForbiddenError = require("../errors/forbiddenError");
 const { handleErrors } = require("../middlewares/error-handler");
 const clothingItemModel = require("../models/clothingItem");
-const {
-  invalidDataPassError,
-  notExistingError,
-  defaultError,
-  forbiddenError,
-} = require("../utils/errors");
+const { defaultError } = require("../utils/errors");
 
 function getClothingItems(req, res) {
   clothingItemModel
@@ -34,9 +29,7 @@ function deleteClothingItem(req, res, next) {
           .findOneAndRemove({ _id: req.params.itemId })
           .orFail()
           .then((user) => res.status(200).send({ user }))
-          .catch((err) => {
-            return handleErrors(err, res, next);
-          });
+          .catch((err) => handleErrors(err, res, next));
       }
       return next(new ForbiddenError("Forbidden error"));
     });
@@ -51,11 +44,9 @@ function likeItem(req, res) {
     )
     .orFail()
     .then((updatedItem) => res.status(200).send(updatedItem))
-    .catch((err) => {
-      return handleErrors(err, res, next);
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
-function dislikeItem(req, res) {
+function dislikeItem(req, res, next) {
   clothingItemModel
     .findByIdAndUpdate(
       req.params.itemId,
@@ -64,9 +55,7 @@ function dislikeItem(req, res) {
     )
     .orFail()
     .then((updatedItem) => res.send(updatedItem))
-    .catch((err) => {
-      return handleErrors(err, res, next);
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
 function createClothingItem(req, res, next) {
   const { name, weather, imageUrl } = req.body;
@@ -74,9 +63,7 @@ function createClothingItem(req, res, next) {
   clothingItemModel
     .create({ name, weather, imageUrl, owner: req.user._id })
     .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      return handleErrors(err, res, next);
-    });
+    .catch((err) => handleErrors(err, res, next));
 }
 
 module.exports = {
