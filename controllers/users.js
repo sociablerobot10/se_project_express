@@ -1,18 +1,12 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const {
-  invalidDataPassError,
-  notExistingError,
-  defaultError,
-  conflictError,
-  unauthorizedError,
-} = require("../utils/errors");
+const { invalidDataPassError } = require("../utils/errors");
 const { handleErrors } = require("../middlewares/error-handler");
 
 const userModel = require("../models/user");
 const { JWT } = require("../utils/config");
 
-function createUser(req, res) {
+function createUser(req, res, next) {
   const { name, email, password, avatar } = req.body;
   userModel
     .findOne({ email })
@@ -28,7 +22,7 @@ function createUser(req, res) {
     .then(() => res.status(201).send({ name, email, avatar }))
     .catch((err) => handleErrors(err, res, next));
 }
-function login(req, res) {
+function login(req, res, next) {
   const { email, password } = req.body;
   if (!email || !password) {
     return res
@@ -56,7 +50,7 @@ function login(req, res) {
     .catch((err) => handleErrors(err, res, next));
 }
 
-function updateUser(req, res) {
+function updateUser(req, res, next) {
   const { name, avatar } = req.body;
 
   userModel
@@ -70,7 +64,7 @@ function updateUser(req, res) {
     .catch((err) => handleErrors(err, res, next));
 }
 
-function getCurrentUser(req, res) {
+function getCurrentUser(req, res, next) {
   userModel
     .findById(req.user._id)
     .then((user) => {

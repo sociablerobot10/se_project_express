@@ -1,14 +1,5 @@
-const {
-  invalidDataPassError,
-  notExistingError,
-  defaultError,
-  conflictError,
-  forbiddenError,
-  unauthorizedError,
-} = require("../utils/errors");
 const BadRequestError = require("../errors/badRequestError");
 const ForbiddenError = require("../errors/forbiddenError");
-const UnAuthorizedError = require("../errors/unauthorizedError");
 const NotFoundError = require("../errors/notFoundError");
 const ConflictError = require("../errors/conflictError");
 
@@ -23,7 +14,6 @@ function errorHandler(err, req, res, next) {
 
 function handleErrors(err, res, next, message) {
   if (err.name === "ValidationError" || err.name === "CastError") {
-    //return res.status(invalidDataPassError).send({ message: err.message });
     return next(new BadRequestError(message || err.message));
   }
   if (err.name === "DocumentNotFoundError" || err.name === "NotFoundError") {

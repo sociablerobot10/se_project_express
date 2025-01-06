@@ -35,7 +35,7 @@ function deleteClothingItem(req, res, next) {
     });
 }
 
-function likeItem(req, res) {
+function likeItem(req, res, next) {
   clothingItemModel
     .findByIdAndUpdate(
       req.params.itemId,
