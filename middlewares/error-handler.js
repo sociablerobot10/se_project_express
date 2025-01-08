@@ -25,6 +25,7 @@ function handleErrors(err, res, next, message) {
   if (err.code === 11000) {
     return next(new ConflictError(message || err.message));
   }
+  next(err);
 }
 
 module.exports = { errorHandler, handleErrors };

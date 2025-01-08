@@ -7,10 +7,11 @@ const {
   dislikeItem,
 } = require("../controllers/clothingItems");
 const authorizeUser = require("../middlewares/auth");
+const { validateClothingItem } = require("../middlewares/validation");
 
 router.get("/", getClothingItems);
 
-router.post("/", authorizeUser, createClothingItem);
+router.post("/", validateClothingItem, authorizeUser, createClothingItem);
 router.delete("/:itemId", authorizeUser, deleteClothingItem);
 router.put("/:itemId/likes", authorizeUser, likeItem);
 router.delete("/:itemId/likes", authorizeUser, dislikeItem);
