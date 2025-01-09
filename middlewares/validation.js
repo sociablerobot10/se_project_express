@@ -44,7 +44,7 @@ const validateUserID = celebrate({
 });
 const validateclothingItemID = celebrate({
   params: Joi.object().keys({
-    id: Joi.hex().required().length(24),
+    itemId: Joi.hex().required().length(24),
   }),
 });
 
