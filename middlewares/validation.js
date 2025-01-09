@@ -34,6 +34,7 @@ const validateUser = celebrate({
     }),
     email: Joi.string().required().custom(validateEmail),
     password: Joi.string().required(),
+    avatar: Joi.string().required().custom(validateUrl),
   }),
 });
 
@@ -49,6 +50,7 @@ const validateUserAuth = celebrate({
       "string.email": "Please provide a valid email address",
       "any.required": "Email is required",
     }),
+    password: Joi.required(),
   }),
 });
 const validateclothingItemID = celebrate({
