@@ -39,7 +39,16 @@ const validateUser = celebrate({
 
 const validateUserID = celebrate({
   params: Joi.object().keys({
-    id: Joi.hex().required().length(24),
+    _id: Joi.hex().required().length(24),
+  }),
+});
+
+const validateUserAuth = celebrate({
+  body: Joi.object().keys({
+    email: Joi.email().required().messages({
+      "string.email": "Please provide a valid email address",
+      "any.required": "Email is required",
+    }),
   }),
 });
 const validateclothingItemID = celebrate({
@@ -48,4 +57,10 @@ const validateclothingItemID = celebrate({
   }),
 });
 
-module.exports = { validateClothingItem, validateUser };
+module.exports = {
+  validateclothingItemID,
+  validateClothingItem,
+  validateUser,
+  validateUserAuth,
+  validateUserID,
+};
