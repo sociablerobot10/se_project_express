@@ -40,22 +40,22 @@ const validateUser = celebrate({
 
 const validateUserID = celebrate({
   params: Joi.object().keys({
-    _id: Joi.hex().required().length(24),
+    _id: Joi.string().required().hex().length(24),
   }),
 });
 
 const validateUserAuth = celebrate({
   body: Joi.object().keys({
-    email: Joi.email().required().messages({
+    email: Joi.string().email().required().messages({
       "string.email": "Please provide a valid email address",
       "any.required": "Email is required",
     }),
-    password: Joi.required(),
+    password: Joi.string().required(),
   }),
 });
 const validateclothingItemID = celebrate({
   params: Joi.object().keys({
-    itemId: Joi.hex().required().length(24),
+    itemId: Joi.string().required().hex().length(24),
   }),
 });
 
