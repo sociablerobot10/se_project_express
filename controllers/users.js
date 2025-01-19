@@ -4,7 +4,7 @@ const { invalidDataPassError } = require("../utils/errors");
 const { handleErrors } = require("../middlewares/error-handler");
 
 const userModel = require("../models/user");
-const { JWT } = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 
 function createUser(req, res, next) {
   const { name, email, password, avatar } = req.body;
@@ -33,7 +33,7 @@ function login(req, res, next) {
     .findUserByCredentials(email, password)
     .then((user) => {
       // authentication successful! user is in the user variable
-      const token = jwt.sign({ _id: user._id }, JWT, {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
       res.setHeader("Content-Type", "application/json");

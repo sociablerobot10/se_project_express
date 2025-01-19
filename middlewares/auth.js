@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const { JWT } = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 
 const UnAuthorizedError = require("../errors/unauthorizedError");
 
@@ -16,7 +16,7 @@ function authorizeUser(req, res, next) {
     return next(new UnAuthorizedError("Incorrect authorization header"));
   }
   const token = authorization.replace("Bearer ", "");
-  return jwt.verify(token, JWT, (err, payload) => {
+  return jwt.verify(token, JWT_SECRET, (err, payload) => {
     if (err) {
       // return res
       //   .status(unauthorizedError)
