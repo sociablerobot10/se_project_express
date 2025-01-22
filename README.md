@@ -6,6 +6,11 @@ The models folder contains the schemas for the database collections.
 The controllers folder handles the server logic.
 The routes folder defines the API endpoints.
 
+Websites:
+api.ttpwtwr.jumpingcrab.com
+ttpwtwr.jumpingcrab.com
+www.ttpwtwr.jumpingcrab.com
+
 Available API Endpoints:
 
 Users:
