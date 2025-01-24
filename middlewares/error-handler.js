@@ -6,8 +6,7 @@ const ConflictError = require("../errors/conflictError");
 function errorHandler(err, req, res, next) {
   const statusCode = err.statusCode || 500;
   const message = err.message || "An error occuried on the server";
-  console.error(message, statusCode);
-  res.status(statusCode).send(message);
+  res.status(statusCode).send({ message });
 
   next();
 }
@@ -25,7 +24,7 @@ function handleErrors(err, res, next, message) {
   if (err.code === 11000) {
     return next(new ConflictError(message || err.message));
   }
-  next(err);
+  return next(err);
 }
 
 module.exports = { errorHandler, handleErrors };

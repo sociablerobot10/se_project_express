@@ -1,19 +1,14 @@
 const ForbiddenError = require("../errors/forbiddenError");
 const { handleErrors } = require("../middlewares/error-handler");
 const clothingItemModel = require("../models/clothingItem");
-const { defaultError } = require("../utils/errors");
 
-function getClothingItems(req, res) {
+function getClothingItems(req, res, next) {
   clothingItemModel
     .find({})
     .then((items) => {
       res.status(200).send(items);
     })
-    .catch(() =>
-      res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" })
-    );
+    .catch(next);
 }
 
 function deleteClothingItem(req, res, next) {
@@ -31,6 +26,7 @@ function deleteClothingItem(req, res, next) {
           .then((user) => res.status(200).send({ user }))
           .catch((err) => handleErrors(err, res, next));
       }
+
       return next(new ForbiddenError("Forbidden error"));
     });
 }

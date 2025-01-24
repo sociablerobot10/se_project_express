@@ -14,18 +14,18 @@ const {
 
 router.get("/", getClothingItems);
 
-router.post("/", validateClothingItem, authorizeUser, createClothingItem);
+router.post("/", authorizeUser, validateClothingItem, createClothingItem);
 router.delete(
   "/:itemId",
   validateclothingItemID,
   authorizeUser,
   deleteClothingItem
 );
-router.put("/:itemId/likes", validateclothingItemID, authorizeUser, likeItem);
+router.put("/:itemId/likes", authorizeUser, validateclothingItemID, likeItem);
 router.delete(
   "/:itemId/likes",
-  validateclothingItemID,
   authorizeUser,
+  validateclothingItemID,
   dislikeItem
 );
 

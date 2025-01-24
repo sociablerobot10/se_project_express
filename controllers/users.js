@@ -1,9 +1,13 @@
 const jwt = require("jsonwebtoken");
+
 const bcrypt = require("bcryptjs");
-const { invalidDataPassError } = require("../utils/errors");
+
+const ConflictError = require("../errors/conflictError");
+
 const { handleErrors } = require("../middlewares/error-handler");
 
 const userModel = require("../models/user");
+
 const { JWT_SECRET } = require("../utils/config");
 
 function createUser(req, res, next) {
@@ -12,7 +16,7 @@ function createUser(req, res, next) {
     .findOne({ email })
     .then((user) => {
       if (user) {
-        throw new Error("Email taken");
+        throw new ConflictError("Email taken");
       }
       return bcrypt.hash(password, 10);
     })
@@ -25,9 +29,7 @@ function createUser(req, res, next) {
 function login(req, res, next) {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(invalidDataPassError)
-      .send({ message: "Incorrect username or password" });
+    next();
   }
   return userModel
     .findUserByCredentials(email, password)
