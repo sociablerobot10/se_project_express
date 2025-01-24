@@ -28,7 +28,8 @@ function deleteClothingItem(req, res, next) {
       }
 
       return next(new ForbiddenError("Forbidden error"));
-    });
+    })
+    .catch((err) => handleErrors(err, res, next));
 }
 
 function likeItem(req, res, next) {
